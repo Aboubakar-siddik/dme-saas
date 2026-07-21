@@ -1,5 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { PatientListPage } from './pages/PatientListPage';
+import { PatientCreatePage } from './pages/PatientCreatePage';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
         <main className="max-w-7xl mx-auto px-4 py-8">
           <Routes>
             <Route path="/" element={<PatientListPage />} />
+            <Route path="/patients/new" element={<PatientCreatePage />} />
           </Routes>
         </main>
       </div>
