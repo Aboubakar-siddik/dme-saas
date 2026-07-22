@@ -23,9 +23,35 @@ model Patient {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  visits Visit[]
+
   // Index pour la recherche rapide
   @@unique([clinicId, phoneNumber])
   @@index([clinicId, lastName, firstName])
   @@index([clinicId, phoneNumber])
   @@map("patients")
+}
+
+model Visit {
+  id           String   @id @default(cuid())
+  patientId    String
+  clinicId     String
+  doctorId     String?
+  secretaryId  String?
+  visitDate    DateTime @default(now())
+  reason       String
+  status       String   @default("WAITING")
+  observations String?
+  diagnosis    String?
+  prescription String?
+  fee          Float?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId, visitDate])
+  @@index([patientId])
+  @@index([doctorId, status])
+  @@map("visits")
 }
