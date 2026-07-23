@@ -1,11 +1,15 @@
-import axios from 'axios';
+
 import type { Patient, PatientSearchResult } from '../types/patient';
 
-const api = axios.create({
-  baseURL: '/api/v1',
-  headers: {
-    'Content-Type': 'application/json',
-  },
+import api from './client';
+
+// Intercepteur : ajouter le token à toutes les requêtes
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 export async function searchPatients(query: string): Promise<PatientSearchResult> {
