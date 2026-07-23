@@ -9,7 +9,7 @@ import { NewVisitPage } from './pages/NewVisitPage';
 import { LoginPage } from './pages/LoginPage';
 import { PrescriptionPage } from './pages/PrescriptionPage';
 import { UsersPage } from './pages/UsersPage';
-
+import { DashboardPage } from './pages/DashboardPage';
 
 
 // Composant pour protéger les routes
@@ -39,11 +39,12 @@ function AppLayout() {
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 py-4 flex items-center justify-between">
           <div className="flex items-center space-x-8">
-            <Link to="/" className="text-xl font-bold text-blue-600 hover:text-blue-700">
+            <Link to="/dashboard" className="text-xl font-bold text-blue-600 hover:text-blue-700">
               DME SaaS
             </Link>
             <nav className="space-x-4">
-              <Link to="/" className="text-gray-600 hover:text-gray-900">Patients</Link>
+              <Link to="/dashboard" className="text-gray-600 hover:text-gray-900">Tableau de bord</Link>
+              <Link to="/patients" className="text-gray-600 hover:text-gray-900">Patients</Link>
               <Link to="/queue" className="text-gray-600 hover:text-gray-900">File d'attente</Link>
               {user?.role === 'ADMIN' && (
                 <Link to="/users" className="text-gray-600 hover:text-gray-900">Utilisateurs</Link>
@@ -65,7 +66,12 @@ function AppLayout() {
       </header>
       <main className="max-w-7xl mx-auto px-4 py-8">
         <Routes>
-          <Route path="/" element={<ProtectedRoute><PatientListPage /></ProtectedRoute>} />
+          {/* Redirection par défaut */}
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          
+          {/* Pages principales */}
+          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/patients" element={<ProtectedRoute><PatientListPage /></ProtectedRoute>} />
           <Route path="/patients/new" element={<ProtectedRoute><PatientCreatePage /></ProtectedRoute>} />
           <Route path="/patients/:id" element={<ProtectedRoute><PatientDetailPage /></ProtectedRoute>} />
           <Route path="/patients/:patientId/new-visit" element={<ProtectedRoute><NewVisitPage /></ProtectedRoute>} />
@@ -73,6 +79,17 @@ function AppLayout() {
           <Route path="/visits/:id" element={<ProtectedRoute><VisitDetailPage /></ProtectedRoute>} />
           <Route path="/visits/:id/prescription" element={<ProtectedRoute><PrescriptionPage /></ProtectedRoute>} />
           <Route path="/users" element={<ProtectedRoute><UsersPage /></ProtectedRoute>} />
+          
+          {/* Page 404 */}
+          <Route path="*" element={
+            <div className="text-center py-12">
+              <p className="text-5xl font-bold text-gray-300 mb-4">404</p>
+              <p className="text-gray-500 mb-4">Page introuvable</p>
+              <Link to="/dashboard" className="text-blue-600 hover:underline">
+                Retour au tableau de bord
+              </Link>
+            </div>
+          } />
         </Routes>
       </main>
     </div>
