@@ -8,6 +8,9 @@ import { VisitDetailPage } from './pages/VisitDetailPage';
 import { NewVisitPage } from './pages/NewVisitPage';
 import { LoginPage } from './pages/LoginPage';
 import { PrescriptionPage } from './pages/PrescriptionPage';
+import { UsersPage } from './pages/UsersPage';
+
+
 
 // Composant pour protéger les routes
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -42,6 +45,9 @@ function AppLayout() {
             <nav className="space-x-4">
               <Link to="/" className="text-gray-600 hover:text-gray-900">Patients</Link>
               <Link to="/queue" className="text-gray-600 hover:text-gray-900">File d'attente</Link>
+              {user?.role === 'ADMIN' && (
+                <Link to="/users" className="text-gray-600 hover:text-gray-900">Utilisateurs</Link>
+              )}
             </nav>
           </div>
           <div className="flex items-center space-x-4">
@@ -66,6 +72,7 @@ function AppLayout() {
           <Route path="/queue" element={<ProtectedRoute><WaitingQueuePage /></ProtectedRoute>} />
           <Route path="/visits/:id" element={<ProtectedRoute><VisitDetailPage /></ProtectedRoute>} />
           <Route path="/visits/:id/prescription" element={<ProtectedRoute><PrescriptionPage /></ProtectedRoute>} />
+          <Route path="/users" element={<ProtectedRoute><UsersPage /></ProtectedRoute>} />
         </Routes>
       </main>
     </div>
