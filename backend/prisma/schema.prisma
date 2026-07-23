@@ -9,9 +9,52 @@ datasource db {
   provider = "postgresql"
 }
 
+enum UserRole {
+  ADMIN
+  DOCTOR
+  SECRETARY
+}
+
+model Clinic {
+  id        String   @id @default(cuid())
+  name      String
+  address   String?
+  phone     String?
+  email     String?
+  logo      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  users    User[]
+  patients Patient[]
+  visits   Visit[]
+
+  @@map("clinics")
+}
+
+// 3. Puis le modèle User (qui utilise UserRole)
+model User {
+  id           String   @id @default(cuid())
+  clinicId     String
+  email        String   @unique
+  passwordHash String
+  role         UserRole
+  firstName    String
+  lastName     String
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  clinic Clinic @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+
+  @@index([clinicId])
+  @@map("users")
+}
+
 model Patient {
   id             String   @id @default(cuid())
   clinicId       String
+  clinic   Clinic  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
   firstName      String
   lastName       String
   phoneNumber    String
@@ -22,6 +65,7 @@ model Patient {
   medicalHistory String?
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
+  
 
   visits Visit[]
 
@@ -36,6 +80,7 @@ model Visit {
   id           String   @id @default(cuid())
   patientId    String
   clinicId     String
+  clinic   Clinic  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
   doctorId     String?
   secretaryId  String?
   visitDate    DateTime @default(now())
@@ -55,3 +100,4 @@ model Visit {
   @@index([doctorId, status])
   @@map("visits")
 }
+
