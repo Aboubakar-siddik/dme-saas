@@ -136,22 +136,29 @@ export function VisitDetailPage() {
             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
           />
         </div>
-
-        {/* Boutons */}
         <div className="flex justify-end space-x-3">
-          <Link
-            to="/queue"
-            className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
-          >
-            Annuler
-          </Link>
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
-          >
-            {saving ? 'Enregistrement...' : 'Terminer la consultation'}
-          </button>
+            {/* Bouton Ordonnance (visible seulement si prescription existe) */}
+            {(prescription || visit?.prescription) && (
+              <Link
+                to={`/visits/${id}/prescription`}
+                className="px-4 py-2 bg-white border border-blue-500 text-blue-600 rounded-lg hover:bg-blue-50"
+              >
+                🖨️ Ordonnance
+              </Link>
+            )}
+            <Link
+              to="/queue"
+              className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+            >
+              Annuler
+            </Link>
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50"
+            >
+              {saving ? 'Enregistrement...' : 'Terminer la consultation'}
+            </button>
         </div>
       </div>
     </div>

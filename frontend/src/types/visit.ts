@@ -18,6 +18,8 @@ export interface Visit {
     firstName: string;
     lastName: string;
     phoneNumber?: string;
+    dateOfBirth?: string | null;  // ← Vérifie que cette ligne existe
+    sex?: string | null;           // ← Vérifie que cette ligne existe
     bloodGroup?: string | null;
     allergies?: string | null;
     medicalHistory?: string | null;

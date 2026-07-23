@@ -7,6 +7,7 @@ import { WaitingQueuePage } from './pages/WaitingQueuePage';
 import { VisitDetailPage } from './pages/VisitDetailPage';
 import { NewVisitPage } from './pages/NewVisitPage';
 import { LoginPage } from './pages/LoginPage';
+import { PrescriptionPage } from './pages/PrescriptionPage';
 
 // Composant pour protéger les routes
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -64,6 +65,7 @@ function AppLayout() {
           <Route path="/patients/:patientId/new-visit" element={<ProtectedRoute><NewVisitPage /></ProtectedRoute>} />
           <Route path="/queue" element={<ProtectedRoute><WaitingQueuePage /></ProtectedRoute>} />
           <Route path="/visits/:id" element={<ProtectedRoute><VisitDetailPage /></ProtectedRoute>} />
+          <Route path="/visits/:id/prescription" element={<ProtectedRoute><PrescriptionPage /></ProtectedRoute>} />
         </Routes>
       </main>
     </div>
