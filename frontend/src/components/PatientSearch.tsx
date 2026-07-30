@@ -7,7 +7,7 @@ export function PatientSearch() {
   const [query, setQuery] = useState('');
   const [results, setResults] = useState<Patient[]>([]);
   const [loading, setLoading] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     // Nettoyer le timeout à la destruction du composant

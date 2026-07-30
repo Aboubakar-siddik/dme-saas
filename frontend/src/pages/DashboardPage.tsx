@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { getDashboardStats, type DashboardStats } from '../api/dashboard';
+import { Users, Activity, Clock, DollarSign } from 'lucide-react';
+import { StatCard } from '../components/ui/StatCard';
+import { Card } from '../components/ui/Card';
+import { Badge } from '../components/ui/Badge';
+import { DashboardCharts } from '../components/DashboardCharts';
 
 export function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -22,73 +27,109 @@ export function DashboardPage() {
   }
 
   if (!stats) {
-    return <p className="text-red-500">Erreur de chargement.</p>;
+    return (
+      <Card className="text-center py-8">
+        <p className="text-red-500">Erreur de chargement des statistiques.</p>
+      </Card>
+    );
   }
 
   return (
     <div className="space-y-6">
-      <h2 className="text-2xl font-bold text-gray-800">Tableau de bord</h2>
+      <div className="flex items-center justify-between">
+        <h2 className="text-2xl font-bold text-gray-800">Tableau de bord</h2>
+        <p className="text-sm text-gray-400">
+          {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+        </p>
+      </div>
 
       {/* Cartes statistiques */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="bg-white shadow rounded-lg p-6">
-          <p className="text-sm text-gray-500 uppercase tracking-wider">Patients total</p>
-          <p className="text-3xl font-bold text-blue-600 mt-2">{stats.totalPatients}</p>
-        </div>
-        <div className="bg-white shadow rounded-lg p-6">
-          <p className="text-sm text-gray-500 uppercase tracking-wider">Visites aujourd'hui</p>
-          <p className="text-3xl font-bold text-green-600 mt-2">{stats.todayVisits}</p>
-        </div>
-        <div className="bg-white shadow rounded-lg p-6">
-          <p className="text-sm text-gray-500 uppercase tracking-wider">En attente</p>
-          <p className="text-3xl font-bold text-orange-600 mt-2">{stats.waitingVisits}</p>
-        </div>
-        <div className="bg-white shadow rounded-lg p-6">
-          <p className="text-sm text-gray-500 uppercase tracking-wider">Revenu du jour</p>
-          <p className="text-3xl font-bold text-purple-600 mt-2">
-            {stats.todayRevenue.toLocaleString()} FCFA
-          </p>
-        </div>
+        <StatCard
+          label="Patients total"
+          value={stats.totalPatients}
+          icon={Users}
+          color="blue"
+        />
+        <StatCard
+          label="Visites aujourd'hui"
+          value={stats.todayVisits}
+          icon={Activity}
+          color="green"
+        />
+        <StatCard
+          label="En attente"
+          value={stats.waitingVisits}
+          icon={Clock}
+          color="orange"
+        />
+        <StatCard
+          label="Revenu du jour"
+          value={`${stats.todayRevenue.toLocaleString()} FCFA`}
+          icon={DollarSign}
+          color="purple"
+        />
       </div>
 
+      {/* Graphiques */}
+      <DashboardCharts />
+
       {/* Dernières visites */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4">Dernières visites</h3>
+      <Card>
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-800">Dernières visites</h3>
+          <Link to="/queue" className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+            Voir la file d'attente →
+          </Link>
+        </div>
+
         {stats.recentVisits.length === 0 ? (
-          <p className="text-gray-400 text-center py-4">Aucune visite enregistrée.</p>
+          <div className="text-center py-8">
+            <Activity size={40} className="mx-auto text-gray-300 mb-3" />
+            <p className="text-gray-400">Aucune visite enregistrée.</p>
+            <Link to="/patients" className="text-blue-600 text-sm hover:underline mt-2 inline-block">
+              Créer une première visite
+            </Link>
+          </div>
         ) : (
           <div className="space-y-2">
             {stats.recentVisits.map((visit) => (
               <Link
                 key={visit.id}
                 to={`/visits/${visit.id}`}
-                className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-lg border border-gray-100"
+                className="flex items-center justify-between p-4 hover:bg-gray-50 rounded-lg border border-gray-100 transition-colors"
               >
-                <div>
-                  <span className="font-medium text-gray-900">
-                    {visit.patient?.firstName} {visit.patient?.lastName}
-                  </span>
-                  <span className="text-sm text-gray-500 ml-3">{visit.reason}</span>
+                <div className="flex items-center space-x-4">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <Users size={18} className="text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="font-medium text-gray-900">
+                      {visit.patient?.firstName} {visit.patient?.lastName}
+                    </p>
+                    <p className="text-sm text-gray-500">{visit.reason}</p>
+                  </div>
                 </div>
                 <div className="flex items-center space-x-3">
-                  <span className={`px-2 py-0.5 text-xs rounded-full ${
-                    visit.status === 'COMPLETED'
-                      ? 'bg-green-100 text-green-700'
-                      : visit.status === 'WAITING'
-                      ? 'bg-blue-100 text-blue-700'
-                      : 'bg-yellow-100 text-yellow-700'
-                  }`}>
+                  <Badge
+                    variant={
+                      visit.status === 'COMPLETED' ? 'success' :
+                      visit.status === 'WAITING' ? 'info' : 'warning'
+                    }
+                  >
                     {visit.status === 'COMPLETED' ? 'Terminée' : visit.status === 'WAITING' ? 'En attente' : 'En cours'}
-                  </span>
+                  </Badge>
                   {visit.fee && (
-                    <span className="text-sm text-gray-600">{visit.fee.toLocaleString()} FCFA</span>
+                    <span className="text-sm font-medium text-gray-700">
+                      {visit.fee.toLocaleString()} FCFA
+                    </span>
                   )}
                 </div>
               </Link>
             ))}
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 }

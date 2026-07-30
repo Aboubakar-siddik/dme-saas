@@ -112,7 +112,7 @@ useEffect(() => {
           {patient.allergies && (
             <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-lg">
               <h3 className="font-bold text-red-700 flex items-center space-x-2">
-                <span>⚠️</span>
+                <span></span>
                 <span>Allergies connues</span>
               </h3>
               <p className="text-red-600 mt-1">{patient.allergies}</p>
@@ -144,7 +144,7 @@ useEffect(() => {
 
   {visits.length === 0 ? (
     <div className="text-center py-8 text-gray-400">
-      <p className="text-4xl mb-2">📋</p>
+      <p className="text-4xl mb-2"></p>
       <p>Aucune consultation enregistrée</p>
       <p className="text-sm mt-1">Créez une nouvelle visite pour commencer.</p>
     </div>

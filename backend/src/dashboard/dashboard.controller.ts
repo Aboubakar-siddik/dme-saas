@@ -11,4 +11,9 @@ export class DashboardController {
   getStats(@Req() req: any) {
     return this.dashboardService.getStats(req.user.clinicId);
   }
+
+  @Get('weekly')
+  getWeeklyStats(@Req() req: any) {
+    return this.dashboardService.getWeeklyStats(req.user.clinicId);
+}
 }

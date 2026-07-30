@@ -40,7 +40,7 @@ export function PatientCreatePage() {
         lastName: form.lastName,
         phoneNumber: form.phoneNumber,
         dateOfBirth: form.dateOfBirth || null,
-        sex: form.sex || null,
+        sex: ( form.sex as "MALE" | "FEMALE" | null) || null,
         bloodGroup: form.bloodGroup || null,
         allergies: form.allergies || null,
         medicalHistory: form.medicalHistory || null,

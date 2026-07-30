@@ -10,7 +10,7 @@ import { LoginPage } from './pages/LoginPage';
 import { PrescriptionPage } from './pages/PrescriptionPage';
 import { UsersPage } from './pages/UsersPage';
 import { DashboardPage } from './pages/DashboardPage';
-
+import { useRole } from './hooks/useRole';
 
 // Composant pour protéger les routes
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -33,6 +33,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 function AppLayout() {
   const { user, logout } = useAuth();
+  const { isAdmin, isDoctor, isSecretary } = useRole();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -42,22 +43,35 @@ function AppLayout() {
             <Link to="/dashboard" className="text-xl font-bold text-blue-600 hover:text-blue-700">
               DME SaaS
             </Link>
-            <nav className="space-x-4">
-              <Link to="/dashboard" className="text-gray-600 hover:text-gray-900">Tableau de bord</Link>
-              <Link to="/patients" className="text-gray-600 hover:text-gray-900">Patients</Link>
-              <Link to="/queue" className="text-gray-600 hover:text-gray-900">File d'attente</Link>
-              {user?.role === 'ADMIN' && (
-                <Link to="/users" className="text-gray-600 hover:text-gray-900">Utilisateurs</Link>
+            <nav className="flex items-center space-x-6">
+              <Link to="/dashboard" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                Tableau de bord
+              </Link>
+              <Link to="/patients" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                Patients
+              </Link>
+              {(isDoctor || isSecretary) && (
+                <Link to="/queue" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                  File d'attente
+                </Link>
+              )}
+              {isAdmin && (
+                <Link to="/users" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                  Utilisateurs
+                </Link>
               )}
             </nav>
           </div>
           <div className="flex items-center space-x-4">
             <span className="text-sm text-gray-500">
-              {user?.firstName} {user?.lastName} · {user?.clinic?.name}
+              {user?.firstName} {user?.lastName}
+              <span className="ml-1 px-2 py-0.5 bg-gray-100 rounded-full text-xs">
+                {user?.role === 'ADMIN' ? 'Admin' : user?.role === 'DOCTOR' ? 'Médecin' : 'Secrétaire'}
+              </span>
             </span>
             <button
               onClick={logout}
-              className="text-sm text-red-600 hover:text-red-700"
+              className="text-sm text-red-600 hover:text-red-700 font-medium"
             >
               Déconnexion
             </button>
@@ -66,10 +80,7 @@ function AppLayout() {
       </header>
       <main className="max-w-7xl mx-auto px-4 py-8">
         <Routes>
-          {/* Redirection par défaut */}
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
-          
-          {/* Pages principales */}
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/patients" element={<ProtectedRoute><PatientListPage /></ProtectedRoute>} />
           <Route path="/patients/new" element={<ProtectedRoute><PatientCreatePage /></ProtectedRoute>} />
@@ -79,8 +90,6 @@ function AppLayout() {
           <Route path="/visits/:id" element={<ProtectedRoute><VisitDetailPage /></ProtectedRoute>} />
           <Route path="/visits/:id/prescription" element={<ProtectedRoute><PrescriptionPage /></ProtectedRoute>} />
           <Route path="/users" element={<ProtectedRoute><UsersPage /></ProtectedRoute>} />
-          
-          {/* Page 404 */}
           <Route path="*" element={
             <div className="text-center py-12">
               <p className="text-5xl font-bold text-gray-300 mb-4">404</p>
