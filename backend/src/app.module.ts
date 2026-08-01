@@ -8,9 +8,10 @@ import { AppService } from './app.service.js';
 import { UsersModule } from './users/users.module.js';
 import { DashboardController } from './dashboard/dashboard.controller.js';
 import { DashboardService } from './dashboard/dashboard.service.js';
+import { ClinicModule } from './clinic/clinic.module.js';
 
 @Module({
-  imports: [PrismaModule, AuthModule, UsersModule, PatientsModule, VisitsModule],
+  imports: [PrismaModule, AuthModule , ClinicModule , UsersModule, PatientsModule, VisitsModule],
   controllers: [AppController, DashboardController],
   providers: [AppService, DashboardService],
 })

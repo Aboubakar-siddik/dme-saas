@@ -1,6 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -10,6 +11,17 @@ export function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
+  // Vérifier si la plateforme est configurée
+  useEffect(() => {
+    axios.get('/api/v1/clinic/is-setup')
+      .then(res => {
+        if (!res.data.configured) {
+          navigate('/setup');
+        }
+      })
+      .catch(() => {});
+  }, [navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
@@ -17,7 +29,7 @@ export function LoginPage() {
 
     try {
       await login(email, password);
-      navigate('/');
+      navigate('/dashboard');
     } catch (err: any) {
       setError(err?.response?.data?.message || 'Email ou mot de passe incorrect.');
     } finally {

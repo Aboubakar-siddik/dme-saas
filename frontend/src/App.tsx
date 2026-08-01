@@ -11,8 +11,8 @@ import { PrescriptionPage } from './pages/PrescriptionPage';
 import { UsersPage } from './pages/UsersPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { useRole } from './hooks/useRole';
+import { SetupPage } from './pages/SetupPage';
 
-// Composant pour protéger les routes
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
 
@@ -44,21 +44,13 @@ function AppLayout() {
               DME SaaS
             </Link>
             <nav className="flex items-center space-x-6">
-              <Link to="/dashboard" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
-                Tableau de bord
-              </Link>
-              <Link to="/patients" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
-                Patients
-              </Link>
+              <Link to="/dashboard" className="text-gray-600 hover:text-gray-900 text-sm font-medium">Tableau de bord</Link>
+              <Link to="/patients" className="text-gray-600 hover:text-gray-900 text-sm font-medium">Patients</Link>
               {(isDoctor || isSecretary) && (
-                <Link to="/queue" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
-                  File d'attente
-                </Link>
+                <Link to="/queue" className="text-gray-600 hover:text-gray-900 text-sm font-medium">File d'attente</Link>
               )}
               {isAdmin && (
-                <Link to="/users" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
-                  Utilisateurs
-                </Link>
+                <Link to="/users" className="text-gray-600 hover:text-gray-900 text-sm font-medium">Utilisateurs</Link>
               )}
             </nav>
           </div>
@@ -69,12 +61,7 @@ function AppLayout() {
                 {user?.role === 'ADMIN' ? 'Admin' : user?.role === 'DOCTOR' ? 'Médecin' : 'Secrétaire'}
               </span>
             </span>
-            <button
-              onClick={logout}
-              className="text-sm text-red-600 hover:text-red-700 font-medium"
-            >
-              Déconnexion
-            </button>
+            <button onClick={logout} className="text-sm text-red-600 hover:text-red-700 font-medium">Déconnexion</button>
           </div>
         </div>
       </header>
@@ -94,9 +81,7 @@ function AppLayout() {
             <div className="text-center py-12">
               <p className="text-5xl font-bold text-gray-300 mb-4">404</p>
               <p className="text-gray-500 mb-4">Page introuvable</p>
-              <Link to="/dashboard" className="text-blue-600 hover:underline">
-                Retour au tableau de bord
-              </Link>
+              <Link to="/dashboard" className="text-blue-600 hover:underline">Retour au tableau de bord</Link>
             </div>
           } />
         </Routes>
@@ -110,6 +95,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Routes>
+          <Route path="/setup" element={<SetupPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/*" element={<AppLayout />} />
         </Routes>
