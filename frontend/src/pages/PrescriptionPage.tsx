@@ -2,6 +2,9 @@ import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { getVisit } from '../api/visits';
 import type { Visit } from '../types/visit';
+import { useRole } from '../hooks/useRole';
+import { Navigate } from 'react-router-dom';
+
 
 export function PrescriptionPage() {
   const { id } = useParams<{ id: string }>();
@@ -9,6 +12,10 @@ export function PrescriptionPage() {
   const [loading, setLoading] = useState(true);
   const [clinicName, setClinicName] = useState('Clinique');
   const [doctorName, setDoctorName] = useState('');
+  const { can } = useRole();
+  if (!can('canGeneratePrescription')) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   useEffect(() => {
     if (!id) return;

@@ -3,12 +3,23 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getVisit, updateVisit } from '../api/visits';
 import type { Visit } from '../types/visit';
 
+import { useRole } from '../hooks/useRole';
+import { Navigate } from 'react-router-dom';
+
+
+
 export function VisitDetailPage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [visit, setVisit] = useState<Visit | null>(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+
+  const { can } = useRole();
+
+  if (!can('canManageConsultation')) {
+    return <Navigate to="/dashboard" replace />;
+  }
 
   // Formulaire
   const [observations, setObservations] = useState('');

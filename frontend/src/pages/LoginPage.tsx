@@ -13,30 +13,38 @@ export function LoginPage() {
 
   // Vérifier si la plateforme est configurée
   useEffect(() => {
-    axios.get('/api/v1/clinic/is-setup')
-      .then(res => {
-        if (!res.data.configured) {
-          navigate('/setup');
-        }
-      })
-      .catch(() => {});
-  }, [navigate]);
+  axios.get('/api/v1/clinic/is-setup')
+    .then(res => {
+      if (!res.data.configured) {
+        navigate('/setup');
+      }
+    })
+    .catch(() => {});
+}, [navigate]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    setError('');
-    setLoading(true);
+ const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+  setError('');
+  setLoading(true);
 
-    try {
-      await login(email, password);
+  try {
+    const response = await login(email, password);
+    
+    // Rediriger selon le rôle
+    const role = (response as any)?.user?.role;
+    if (role === 'SECRETARY') {
+      navigate('/patients');
+    } else if (role === 'DOCTOR') {
+      navigate('/queue');
+    } else {
       navigate('/dashboard');
-    } catch (err: any) {
-      setError(err?.response?.data?.message || 'Email ou mot de passe incorrect.');
-    } finally {
-      setLoading(false);
     }
-  };
-
+  } catch (err: any) {
+    setError(err?.response?.data?.message || 'Email ou mot de passe incorrect.');
+  } finally {
+    setLoading(false);
+  }
+};
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white shadow-lg rounded-xl p-8 w-full max-w-md">

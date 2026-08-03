@@ -2,56 +2,46 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreateVisitDto, UpdateVisitDto } from './dto/create-visit.dto.js';
 
-const DEFAULT_CLINIC_ID = 'clinic_001';
-
 @Injectable()
 export class VisitsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  // US-04 : Créer une visite (par la secrétaire)
-  async create(patientId: string, createVisitDto: CreateVisitDto) {
-  const patient = await this.prisma.patient.findFirst({
-    where: { id: patientId, clinicId: DEFAULT_CLINIC_ID },
-  });
+  async create(clinicId: string, patientId: string, createVisitDto: CreateVisitDto) {
+    const patient = await this.prisma.patient.findFirst({
+      where: { id: patientId, clinicId },
+    });
 
-  if (!patient) {
-    throw new NotFoundException('Patient introuvable.');
-  }
-
-  return this.prisma.visit.create({
-    data: {
-      patientId,
-      clinicId: DEFAULT_CLINIC_ID,
-      reason: createVisitDto.reason as string,
-      doctorId: createVisitDto.doctorId || null,
-      status: 'WAITING',
-    },
-    include: {
-      patient: {
-        select: {
-          id: true,
-          firstName: true,
-          lastName: true,
-          phoneNumber: true,
-        },
-      },
-    },
-  });
-}
-  // US-05 : File d'attente du jour pour un médecin
-  async getWaitingQueue(doctorId?: string) {
-    const where: any = {
-      clinicId: DEFAULT_CLINIC_ID,
-      status: 'WAITING',
-    };
-
-    // Si un doctorId est fourni, filtrer par médecin
-    if (doctorId) {
-      where.doctorId = doctorId;
+    if (!patient) {
+      throw new NotFoundException('Patient introuvable.');
     }
 
+    return this.prisma.visit.create({
+      data: {
+        patientId,
+        clinicId,
+        reason: createVisitDto.reason as string,
+        doctorId: createVisitDto.doctorId || null,
+        status: 'WAITING',
+      },
+      include: {
+        patient: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            phoneNumber: true,
+          },
+        },
+      },
+    });
+  }
+
+  async getWaitingQueue(clinicId: string) {
     return this.prisma.visit.findMany({
-      where,
+      where: {
+        clinicId,
+        status: 'WAITING',
+      },
       orderBy: { visitDate: 'asc' },
       include: {
         patient: {
@@ -68,10 +58,9 @@ export class VisitsService {
     });
   }
 
-  // Récupérer une visite par ID
-  async findOne(id: string) {
+  async findOne(clinicId: string, id: string) {
     const visit = await this.prisma.visit.findFirst({
-      where: { id, clinicId: DEFAULT_CLINIC_ID },
+      where: { id, clinicId },
       include: {
         patient: {
           select: {
@@ -94,10 +83,9 @@ export class VisitsService {
     return visit;
   }
 
-  // US-06 : Mettre à jour une visite (observations, diagnostic, prescription)
-  async update(id: string, updateVisitDto: UpdateVisitDto) {
+  async update(clinicId: string, id: string, updateVisitDto: UpdateVisitDto) {
     const visit = await this.prisma.visit.findFirst({
-      where: { id, clinicId: DEFAULT_CLINIC_ID },
+      where: { id, clinicId },
     });
 
     if (!visit) {
@@ -119,15 +107,14 @@ export class VisitsService {
     });
   }
 
-  // US-07 : Historique des visites d'un patient
-  async getPatientHistory(patientId: string) {
+  async getPatientHistory(clinicId: string, patientId: string) {
     return this.prisma.visit.findMany({
       where: {
         patientId,
-        clinicId: DEFAULT_CLINIC_ID,
+        clinicId,
       },
       orderBy: { visitDate: 'desc' },
-      take: 20, // 20 dernières visites
+      take: 20,
     });
   }
 }

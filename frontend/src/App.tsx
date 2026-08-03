@@ -12,6 +12,9 @@ import { UsersPage } from './pages/UsersPage';
 import { DashboardPage } from './pages/DashboardPage';
 import { useRole } from './hooks/useRole';
 import { SetupPage } from './pages/SetupPage';
+import { SettingsPage } from './pages/SettingsPage';
+import { PatientCardPage } from './pages/PatientCardPage';
+
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { isAuthenticated, loading } = useAuth();
@@ -33,7 +36,7 @@ function ProtectedRoute({ children }: { children: React.ReactNode }) {
 
 function AppLayout() {
   const { user, logout } = useAuth();
-  const { isAdmin, isDoctor, isSecretary } = useRole();
+  const { can } = useRole();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -44,13 +47,30 @@ function AppLayout() {
               DME SaaS
             </Link>
             <nav className="flex items-center space-x-6">
-              <Link to="/dashboard" className="text-gray-600 hover:text-gray-900 text-sm font-medium">Tableau de bord</Link>
-              <Link to="/patients" className="text-gray-600 hover:text-gray-900 text-sm font-medium">Patients</Link>
-              {(isDoctor || isSecretary) && (
-                <Link to="/queue" className="text-gray-600 hover:text-gray-900 text-sm font-medium">File d'attente</Link>
+              {can('canViewDashboard') && (
+                <Link to="/dashboard" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                  Tableau de bord
+                </Link>
               )}
-              {isAdmin && (
-                <Link to="/users" className="text-gray-600 hover:text-gray-900 text-sm font-medium">Utilisateurs</Link>
+              {can('canViewPatients') && (
+                <Link to="/patients" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                  Patients
+                </Link>
+              )}
+              {can('canViewQueue') && (
+                <Link to="/queue" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                  File d'attente
+                </Link>
+              )}
+              {can('canManageUsers') && (
+                <Link to="/users" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                  Utilisateurs
+                </Link>
+              )}
+              {can('canManageSettings') && (
+                <Link to="/settings" className="text-gray-600 hover:text-gray-900 text-sm font-medium">
+                  Paramètres
+                </Link>
               )}
             </nav>
           </div>
@@ -61,13 +81,16 @@ function AppLayout() {
                 {user?.role === 'ADMIN' ? 'Admin' : user?.role === 'DOCTOR' ? 'Médecin' : 'Secrétaire'}
               </span>
             </span>
-            <button onClick={logout} className="text-sm text-red-600 hover:text-red-700 font-medium">Déconnexion</button>
+            <button onClick={logout} className="text-sm text-red-600 hover:text-red-700 font-medium">
+              Déconnexion
+            </button>
           </div>
         </div>
       </header>
+
       <main className="max-w-7xl mx-auto px-4 py-8">
         <Routes>
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          <Route path="/" element={<Navigate to="/patients" replace />} />
           <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
           <Route path="/patients" element={<ProtectedRoute><PatientListPage /></ProtectedRoute>} />
           <Route path="/patients/new" element={<ProtectedRoute><PatientCreatePage /></ProtectedRoute>} />
@@ -77,6 +100,8 @@ function AppLayout() {
           <Route path="/visits/:id" element={<ProtectedRoute><VisitDetailPage /></ProtectedRoute>} />
           <Route path="/visits/:id/prescription" element={<ProtectedRoute><PrescriptionPage /></ProtectedRoute>} />
           <Route path="/users" element={<ProtectedRoute><UsersPage /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><SettingsPage /></ProtectedRoute>} />
+          <Route path="/patients/:id/card" element={<ProtectedRoute><PatientCardPage /></ProtectedRoute>} />
           <Route path="*" element={
             <div className="text-center py-12">
               <p className="text-5xl font-bold text-gray-300 mb-4">404</p>

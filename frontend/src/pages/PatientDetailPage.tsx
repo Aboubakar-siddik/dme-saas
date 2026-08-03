@@ -4,6 +4,12 @@ import { getPatient } from '../api/patients';
 import type { Patient } from '../types/patient';
 import { getPatientHistory } from '../api/visits';
 import type { Visit } from '../types/visit';
+import { useRole } from '../hooks/useRole';
+
+
+
+// Remplacer le bouton
+
 
 
 export function PatientDetailPage() {
@@ -12,7 +18,7 @@ export function PatientDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [visits, setVisits] = useState<Visit[]>([]);
-
+  const { can } = useRole();
 useEffect(() => {
   if (!id) return;
 
@@ -134,13 +140,19 @@ useEffect(() => {
 <div className="bg-white shadow rounded-lg p-6">
   <div className="flex items-center justify-between mb-4">
     <h3 className="text-lg font-semibold text-gray-700">Historique des consultations</h3>
-    <Link
-      to={`/patients/${patient.id}/new-visit`}
-      className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700 transition-colors"
-    >
-      + Nouvelle visite
-    </Link>
+    {can('canCreateVisit') && (
+        <Link to={`/patients/${patient.id}/new-visit`} className="...">
+          + Nouvelle visite
+        </Link>
+      )}
+
+      {can('canCreateVisit') && (
+        <Link to={`/patients/${patient.id}/card`} className="px-3 py-1.5 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700">
+           Carnet
+        </Link>
+      )}
   </div>
+  
 
   {visits.length === 0 ? (
     <div className="text-center py-8 text-gray-400">

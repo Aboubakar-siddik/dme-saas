@@ -12,6 +12,7 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
+
 export async function createVisit(patientId: string, reason: string): Promise<Visit> {
   const response = await api.post<Visit>('/visits', { patientId, reason });
   return response.data;

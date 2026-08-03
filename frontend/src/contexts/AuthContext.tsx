@@ -48,18 +48,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [token]);
 
   const login = async (email: string, password: string) => {
-    const response = await axios.post('/api/v1/auth/login', { email, password });
-    const { accessToken, user: userData } = response.data;
-    localStorage.setItem('token', accessToken);
-    setToken(accessToken);
-    setUser(userData);
-  };
+  const response = await axios.post('/api/v1/auth/login', { email, password });
+  const { accessToken, user: userData } = response.data;
+  localStorage.setItem('token', accessToken);
+  setToken(accessToken);
+  setUser(userData);
+  return response.data; // ← Doit retourner les données
+};
 
   const logout = () => {
-    localStorage.removeItem('token');
-    setToken(null);
-    setUser(null);
-  };
+  localStorage.removeItem('token');
+  setToken(null);
+  setUser(null);
+  // Redirection forcée vers login (sans React Router pour éviter les problèmes)
+  window.location.href = '/login';
+};
 
   return (
     <AuthContext.Provider value={{ user, token, login, logout, isAuthenticated: !!user, loading }}>

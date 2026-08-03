@@ -1,40 +1,39 @@
-import { Controller, Get, Post, Patch, Body, Param, Query } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, UseGuards, Req } from '@nestjs/common';
 import { VisitsService } from './visits.service.js';
 import { CreateVisitDto, UpdateVisitDto } from './dto/create-visit.dto.js';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 
 @Controller('visits')
+@UseGuards(JwtAuthGuard)
 export class VisitsController {
   constructor(private readonly visitsService: VisitsService) {}
 
-  // US-04 : Créer une visite pour un patient
-@Post()
-create(@Body() createVisitDto: CreateVisitDto) {
-  return this.visitsService.create(
-    createVisitDto.patientId as string,
-    createVisitDto,
-  );
-}
-  // US-05 : File d'attente
+  @Post()
+  create(@Req() req: any, @Body() createVisitDto: CreateVisitDto) {
+    return this.visitsService.create(
+      req.user.clinicId,
+      createVisitDto.patientId,
+      createVisitDto,
+    );
+  }
+
   @Get('queue')
-  getWaitingQueue(@Query('doctorId') doctorId?: string) {
-    return this.visitsService.getWaitingQueue(doctorId);
+  getWaitingQueue(@Req() req: any) {
+    return this.visitsService.getWaitingQueue(req.user.clinicId);
   }
 
-  // US-07 : Historique des visites d'un patient
   @Get('patient/:patientId')
-  getPatientHistory(@Param('patientId') patientId: string) {
-    return this.visitsService.getPatientHistory(patientId);
+  getPatientHistory(@Req() req: any, @Param('patientId') patientId: string) {
+    return this.visitsService.getPatientHistory(req.user.clinicId, patientId);
   }
 
-  // Détail d'une visite
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.visitsService.findOne(id);
+  findOne(@Req() req: any, @Param('id') id: string) {
+    return this.visitsService.findOne(req.user.clinicId, id);
   }
 
-  // US-06 : Mettre à jour une visite (médecin)
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateVisitDto: UpdateVisitDto) {
-    return this.visitsService.update(id, updateVisitDto);
+  update(@Req() req: any, @Param('id') id: string, @Body() updateVisitDto: UpdateVisitDto) {
+    return this.visitsService.update(req.user.clinicId, id, updateVisitDto);
   }
 }

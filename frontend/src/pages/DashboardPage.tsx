@@ -1,15 +1,22 @@
 import { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import { getDashboardStats, type DashboardStats } from '../api/dashboard';
 import { Users, Activity, Clock, DollarSign } from 'lucide-react';
 import { StatCard } from '../components/ui/StatCard';
 import { Card } from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import { DashboardCharts } from '../components/DashboardCharts';
+import { useRole } from '../hooks/useRole';
 
 export function DashboardPage() {
   const [stats, setStats] = useState<DashboardStats | null>(null);
   const [loading, setLoading] = useState(true);
+
+const { can } = useRole();
+
+  if (!can('canViewDashboard')) {
+    return <Navigate to="/patients" replace />;
+  }
 
   useEffect(() => {
     getDashboardStats()
