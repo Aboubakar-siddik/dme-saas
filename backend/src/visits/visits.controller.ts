@@ -12,7 +12,7 @@ export class VisitsController {
   create(@Req() req: any, @Body() createVisitDto: CreateVisitDto) {
     return this.visitsService.create(
       req.user.clinicId,
-      createVisitDto.patientId,
+      createVisitDto.patientId as string,
       createVisitDto,
     );
   }

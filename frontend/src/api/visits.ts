@@ -13,10 +13,15 @@ api.interceptors.request.use((config) => {
 });
 
 
-export async function createVisit(patientId: string, reason: string): Promise<Visit> {
-  const response = await api.post<Visit>('/visits', { patientId, reason });
+export async function createVisit(
+  patientId: string, 
+  reason: string, 
+  vitals?: Partial<Visit>
+): Promise<Visit> {
+  const response = await api.post<Visit>('/visits', { patientId, reason, ...vitals });
   return response.data;
 }
+
 
 export async function getWaitingQueue(): Promise<Visit[]> {
   const response = await api.get<Visit[]>('/visits/queue');
@@ -30,12 +35,11 @@ export async function getVisit(id: string): Promise<Visit> {
 
 export async function updateVisit(
   id: string,
-  data: Partial<Pick<Visit, 'observations' | 'diagnosis' | 'prescription' | 'fee' | 'status'>>
+  data: Partial<Omit<Visit, 'id' | 'clinicId' | 'patientId' | 'visitDate' | 'createdAt' | 'updatedAt'>>
 ): Promise<Visit> {
   const response = await api.patch<Visit>(`/visits/${id}`, data);
   return response.data;
 }
-
 export async function getPatientHistory(patientId: string): Promise<Visit[]> {
   const response = await api.get<Visit[]>(`/visits/patient/${patientId}`);
   return response.data;

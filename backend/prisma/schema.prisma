@@ -52,52 +52,88 @@ model User {
 }
 
 model Patient {
-  id             String   @id @default(cuid())
-  clinicId       String
-  clinic   Clinic  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
-  firstName      String
-  lastName       String
-  phoneNumber    String
-  dateOfBirth    DateTime?
-  sex            String?
-  bloodGroup     String?
-  allergies      String?
-  medicalHistory String?
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  id                String   @id @default(cuid())
+  clinicId          String
+  imn               String?  @unique
+  firstName         String
+  lastName          String
+  phoneNumber       String
+  dateOfBirth       DateTime?
+  sex               String?
+  bloodGroup        String?
   
+  // Nouveaux champs
+  profession        String?
+  maritalStatus     String?
+  nationality       String?
+  countryOfOrigin   String?
+  cityOfResidence   String?
+  neighborhood      String?
+  idCardNumber      String?
+  email             String?
+  pinCode           String?
+  isMinor           Boolean  @default(false)
+  parentId          String?
+  
+  allergies         String?
+  medicalHistory    String?
+  
+  clinic            Clinic   @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  visits            Visit[]
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
 
-  visits Visit[]
-
-  // Index pour la recherche rapide
   @@unique([clinicId, phoneNumber])
   @@index([clinicId, lastName, firstName])
-  @@index([clinicId, phoneNumber])
   @@map("patients")
 }
 
 model Visit {
-  id           String   @id @default(cuid())
-  patientId    String
-  clinicId     String
-  clinic   Clinic  @relation(fields: [clinicId], references: [id], onDelete: Cascade)
-  doctorId     String?
-  secretaryId  String?
-  visitDate    DateTime @default(now())
-  reason       String
-  status       String   @default("WAITING")
-  observations String?
-  diagnosis    String?
-  prescription String?
-  fee          Float?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  patient Patient @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  id              String    @id @default(cuid())
+  patientId       String
+  clinicId        String
+  doctorId        String?
+  secretaryId     String?
+  visitDate       DateTime  @default(now())
+  reason          String
+  status          String    @default("WAITING")
+  
+  // Paramètres vitaux (pris par la secrétaire)
+  bloodPressure   String?   // ex: "120/80"
+  heartRate       Int?      // bpm
+  respiratoryRate Int?      // cycles/min
+  oxygenSaturation Int?     // % SpO2
+  temperature     Float?    // °C
+  weight          Float?    // kg
+  height          Float?    // cm
+  bloodSugar      Float?    // g/L
+  
+  // Consultation (médecin)
+  anamnesis       String?   // Le patient décrit ses symptômes
+  personalHistory Boolean?  // Antécédents personnels : oui/non
+  personalHistoryDetails String?
+  familyHistory   Boolean?  // Antécédents familiaux : oui/non
+  familyHistoryDetails String?
+  
+  // Systèmes (stockés en JSON string)
+  generalSystems  String?   // JSON : ["neurologique", "respiratoire", ...]
+  cardioSystems   String?   // JSON : ["douleur_thoracique", "palpitations", ...]
+  
+  // Résumé
+  observations    String?
+  diagnosis       String?
+  bilan           String?   // Examens complémentaires demandés
+  prescription    String?
+  fee             Float?
+  
+  clinic          Clinic    @relation(fields: [clinicId], references: [id], onDelete: Cascade)
+  patient         Patient   @relation(fields: [patientId], references: [id], onDelete: Cascade)
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
 
   @@index([clinicId, visitDate])
   @@index([patientId])
   @@index([doctorId, status])
   @@map("visits")
 }
-

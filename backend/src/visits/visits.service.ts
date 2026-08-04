@@ -7,34 +7,43 @@ export class VisitsService {
   constructor(private readonly prisma: PrismaService) {}
 
   async create(clinicId: string, patientId: string, createVisitDto: CreateVisitDto) {
-    const patient = await this.prisma.patient.findFirst({
-      where: { id: patientId, clinicId },
-    });
+  const patient = await this.prisma.patient.findFirst({
+    where: { id: patientId, clinicId },
+  });
 
-    if (!patient) {
-      throw new NotFoundException('Patient introuvable.');
-    }
+  if (!patient) {
+    throw new NotFoundException('Patient introuvable.');
+  }
 
-    return this.prisma.visit.create({
-      data: {
-        patientId,
-        clinicId,
-        reason: createVisitDto.reason as string,
-        doctorId: createVisitDto.doctorId || null,
-        status: 'WAITING',
-      },
-      include: {
-        patient: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            phoneNumber: true,
-          },
+  return this.prisma.visit.create({
+    data: {
+      patientId,
+      clinicId,
+      reason: createVisitDto.reason as string,
+      doctorId: createVisitDto.doctorId || null,
+      status: 'WAITING',
+      // Paramètres vitaux
+      bloodPressure: createVisitDto.bloodPressure || null,
+      heartRate: createVisitDto.heartRate || null,
+      respiratoryRate: createVisitDto.respiratoryRate || null,
+      oxygenSaturation: createVisitDto.oxygenSaturation || null,
+      temperature: createVisitDto.temperature || null,
+      weight: createVisitDto.weight || null,
+      height: createVisitDto.height || null,
+      bloodSugar: createVisitDto.bloodSugar || null,
+    },
+    include: {
+      patient: {
+        select: {
+          id: true,
+          firstName: true,
+          lastName: true,
+          phoneNumber: true,
         },
       },
-    });
-  }
+    },
+  });
+}
 
   async getWaitingQueue(clinicId: string) {
     return this.prisma.visit.findMany({

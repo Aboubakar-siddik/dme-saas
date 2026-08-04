@@ -1,4 +1,4 @@
-import { IsString, MinLength, MaxLength, IsOptional, IsNumber, IsEnum } from 'class-validator';
+import { IsString, IsOptional, IsNumber, IsBoolean, MinLength, MaxLength } from 'class-validator';
 
 export enum VisitStatus {
   WAITING = 'WAITING',
@@ -8,36 +8,104 @@ export enum VisitStatus {
 
 export class CreateVisitDto {
   @IsString()
-  patientId?: string;
+  patientId: string;
 
-  @IsString()
-  @MinLength(2)
-  @MaxLength(200)
-  reason?: string;
+  @IsString() @MinLength(2) @MaxLength(200)
+  reason: string;
 
-  @IsOptional()
-  @IsString()
+  @IsOptional() @IsString()
   doctorId?: string;
+
+  // Paramètres vitaux
+  @IsOptional() @IsString()
+  bloodPressure?: string;
+
+  @IsOptional() @IsNumber()
+  heartRate?: number;
+
+  @IsOptional() @IsNumber()
+  respiratoryRate?: number;
+
+  @IsOptional() @IsNumber()
+  oxygenSaturation?: number;
+
+  @IsOptional() @IsNumber()
+  temperature?: number;
+
+  @IsOptional() @IsNumber()
+  weight?: number;
+
+  @IsOptional() @IsNumber()
+  height?: number;
+
+  @IsOptional() @IsNumber()
+  bloodSugar?: number;
 }
 
 export class UpdateVisitDto {
-  @IsOptional()
-  @IsString()
+  // Paramètres vitaux
+  @IsOptional() @IsString()
+  bloodPressure?: string;
+
+  @IsOptional() @IsNumber()
+  heartRate?: number;
+
+  @IsOptional() @IsNumber()
+  respiratoryRate?: number;
+
+  @IsOptional() @IsNumber()
+  oxygenSaturation?: number;
+
+  @IsOptional() @IsNumber()
+  temperature?: number;
+
+  @IsOptional() @IsNumber()
+  weight?: number;
+
+  @IsOptional() @IsNumber()
+  height?: number;
+
+  @IsOptional() @IsNumber()
+  bloodSugar?: number;
+
+  // Consultation
+  @IsOptional() @IsString()
+  anamnesis?: string;
+
+  @IsOptional() @IsBoolean()
+  personalHistory?: boolean;
+
+  @IsOptional() @IsString()
+  personalHistoryDetails?: string;
+
+  @IsOptional() @IsBoolean()
+  familyHistory?: boolean;
+
+  @IsOptional() @IsString()
+  familyHistoryDetails?: string;
+
+  @IsOptional() @IsString()
+  generalSystems?: string;
+
+  @IsOptional() @IsString()
+  cardioSystems?: string;
+
+  // Résumé
+  @IsOptional() @IsString()
   observations?: string;
 
-  @IsOptional()
-  @IsString()
+  @IsOptional() @IsString()
   diagnosis?: string;
 
-  @IsOptional()
-  @IsString()
+  @IsOptional() @IsString()
+  bilan?: string;
+
+  @IsOptional() @IsString()
   prescription?: string;
 
-  @IsOptional()
-  @IsNumber()
+  @IsOptional() @IsNumber()
   fee?: number;
 
-  @IsOptional()
-  @IsEnum(VisitStatus)
+  @IsOptional() @IsString()
   status?: VisitStatus;
 }
