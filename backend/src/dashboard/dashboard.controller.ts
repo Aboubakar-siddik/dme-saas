@@ -16,4 +16,28 @@ export class DashboardController {
   getWeeklyStats(@Req() req: any) {
     return this.dashboardService.getWeeklyStats(req.user.clinicId);
 }
+@Get('gender')
+getGenderStats(@Req() req: any) {
+  return this.dashboardService.getGenderStats(req.user.clinicId);
+}
+
+@Get('age')
+getAgeStats(@Req() req: any) {
+  return this.dashboardService.getAgeStats(req.user.clinicId);
+}
+
+@Get('diagnosis')
+getDiagnosisStats(@Req() req: any) {
+  return this.dashboardService.getDiagnosisStats(req.user.clinicId);
+}
+
+@Get('trend')
+getConsultationTrend(@Req() req: any) {
+  return this.dashboardService.getConsultationTrend(req.user.clinicId);
+}
+
+@Get('geographic')
+getGeographicStats(@Req() req: any) {
+  return this.dashboardService.getGeographicStats(req.user.clinicId);
+}
 }

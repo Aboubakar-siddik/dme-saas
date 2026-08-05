@@ -11,6 +11,7 @@ interface User {
   clinic: {
     id: string;
     name: string;
+    logo?: string | null;
   };
 }
 

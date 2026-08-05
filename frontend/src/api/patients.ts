@@ -30,3 +30,10 @@ export async function createPatient(
   const response = await api.post<Patient>('/patients', data);
   return response.data;
 }
+export async function updatePatient(
+  id: string,
+  data: Partial<Omit<Patient, 'id' | 'clinicId' | 'createdAt' | 'updatedAt'>>
+): Promise<Patient> {
+  const response = await api.patch<Patient>(`/patients/${id}`, data);
+  return response.data;
+}

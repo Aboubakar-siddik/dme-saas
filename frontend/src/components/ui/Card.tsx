@@ -7,14 +7,10 @@ interface CardProps {
 }
 
 export function Card({ children, className = '', padding = 'normal' }: CardProps) {
-  const paddings = {
-    none: 'p-0',
-    small: 'p-4',
-    normal: 'p-6',
-  };
-
+  const paddings = { none: 'p-0', small: 'p-4', normal: 'p-6' };
   return (
-    <div className={`bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200 ${paddings[padding]} ${className}`}>
+    <div className={`bg-surface-50 rounded-xl shadow-sm border border-surface-200 
+      hover:shadow-md transition-all duration-200 ${paddings[padding]} ${className}`}>
       {children}
     </div>
   );

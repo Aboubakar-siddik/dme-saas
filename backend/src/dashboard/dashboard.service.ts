@@ -113,4 +113,97 @@ export class DashboardService {
 
   return days;
 }
+
+    // Répartition par sexe
+    async getGenderStats(clinicId: string) {
+      const result = await this.prisma.patient.groupBy({
+        by: ['sex'],
+        where: { clinicId, sex: { not: null } },
+        _count: true,
+      });
+
+      return result.map(r => ({
+        name: r.sex === 'MALE' ? 'Hommes' : 'Femmes',
+        value: r._count,
+      }));
+    }
+
+    // Répartition par tranche d'âge
+    async getAgeStats(clinicId: string) {
+      const patients = await this.prisma.patient.findMany({
+        where: { clinicId, dateOfBirth: { not: null } },
+        select: { dateOfBirth: true },
+      });
+
+      const ageGroups = {
+        '0-10 ans': 0, '11-20 ans': 0, '21-40 ans': 0,
+        '41-60 ans': 0, '60+ ans': 0,
+      };
+
+      const now = new Date();
+      patients.forEach(p => {
+        const age = Math.floor((now.getTime() - new Date(p.dateOfBirth!).getTime()) / (365.25 * 24 * 60 * 60 * 1000));
+        if (age <= 10) ageGroups['0-10 ans']++;
+        else if (age <= 20) ageGroups['11-20 ans']++;
+        else if (age <= 40) ageGroups['21-40 ans']++;
+        else if (age <= 60) ageGroups['41-60 ans']++;
+        else ageGroups['60+ ans']++;
+      });
+
+      return Object.entries(ageGroups).map(([name, value]) => ({ name, value }));
+    }
+
+    // Top 10 des diagnostics
+    async getDiagnosisStats(clinicId: string) {
+      const visits = await this.prisma.visit.findMany({
+        where: { clinicId, diagnosis: { not: null }, status: 'COMPLETED' },
+        select: { diagnosis: true },
+      });
+
+      const diagnosisCount: Record<string, number> = {};
+      visits.forEach(v => {
+        const diag = v.diagnosis || 'Non spécifié';
+        diagnosisCount[diag] = (diagnosisCount[diag] || 0) + 1;
+      });
+
+      return Object.entries(diagnosisCount)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10)
+        .map(([name, value]) => ({ name, value }));
+    }
+
+    // Évolution des consultations sur 30 jours
+    async getConsultationTrend(clinicId: string) {
+      const days: { date: string; consultations: number }[] = [];
+      for (let i = 29; i >= 0; i--) {
+        const date = new Date();
+        date.setDate(date.getDate() - i);
+        date.setHours(0, 0, 0, 0);
+        const nextDate = new Date(date);
+        nextDate.setDate(nextDate.getDate() + 1);
+
+        const count = await this.prisma.visit.count({
+          where: { clinicId, visitDate: { gte: date, lt: nextDate } },
+        });
+
+        days.push({
+          date: date.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' }),
+          consultations: count,
+        });
+      }
+      return days;
+    }
+
+    // Répartition géographique (par ville)
+    async getGeographicStats(clinicId: string) {
+      const result = await this.prisma.patient.groupBy({
+        by: ['cityOfResidence'],
+        where: { clinicId, cityOfResidence: { not: null } },
+        _count: true,
+      });
+
+      return result
+        .sort((a, b) => b._count - a._count)
+        .map(r => ({ name: r.cityOfResidence || 'Inconnue', value: r._count }));
+    }
 }

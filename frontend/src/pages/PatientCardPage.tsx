@@ -51,13 +51,28 @@ export function PatientCardPage() {
               <div><span className="font-semibold">Date de naissance :</span> {patient.dateOfBirth ? new Date(patient.dateOfBirth).toLocaleDateString('fr-FR') : 'N/A'}</div>
               <div><span className="font-semibold">Sexe :</span> {patient.sex === 'MALE' ? 'Masculin' : patient.sex === 'FEMALE' ? 'Féminin' : 'N/A'}</div>
               <div><span className="font-semibold">Groupe sanguin :</span> {patient.bloodGroup?.replace(/_/g, ' ') || 'N/A'}</div>
+            
+              <div><span className="font-semibold">Profession :</span> {patient.profession || 'N/A'}</div>
+                <div><span className="font-semibold">Statut matrimonial :</span> {
+                patient.maritalStatus === 'CELIBATAIRE' ? 'Célibataire' :
+                patient.maritalStatus === 'MARIE' ? 'Marié(e)' :
+                patient.maritalStatus === 'DIVORCE' ? 'Divorcé(e)' :
+                patient.maritalStatus === 'VEUF' ? 'Veuf/Veuve' : 'N/A'
+                }</div>
+                <div><span className="font-semibold">Nationalité :</span> {patient.nationality || 'N/A'}</div>
+                <div><span className="font-semibold">Pays d'origine :</span> {patient.countryOfOrigin || 'N/A'}</div>
+                <div><span className="font-semibold">Ville :</span> {patient.cityOfResidence || 'N/A'}</div>
+                <div><span className="font-semibold">Quartier :</span> {patient.neighborhood || 'N/A'}</div>
+                <div><span className="font-semibold">N° CNI :</span> {patient.idCardNumber || 'N/A'}</div>
+                <div><span className="font-semibold">Email :</span> {patient.email || 'N/A'}</div>
+                            
             </div>
           </div>
 
           {/* Allergies */}
           {patient.allergies && (
             <div className="mb-6 p-3 bg-red-50 border border-red-200 rounded">
-              <span className="font-bold text-red-700">⚠️ Allergies :</span> {patient.allergies}
+              <span className="font-bold text-red-700"> Allergies :</span> {patient.allergies}
             </div>
           )}
 
@@ -74,7 +89,7 @@ export function PatientCardPage() {
               <p className="text-sm text-gray-500">Aucune consultation enregistrée.</p>
             ) : (
               <div className="space-y-3">
-                {visits.map((visit, index) => (
+                {visits.map((visit) => (
                   <div key={visit.id} className="border border-gray-200 rounded p-3 text-sm">
                     <div className="flex justify-between font-semibold mb-1">
                       <span>Consultation du {new Date(visit.visitDate).toLocaleDateString('fr-FR')}</span>

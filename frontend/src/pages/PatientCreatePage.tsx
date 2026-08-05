@@ -3,6 +3,8 @@ import { useNavigate, Link } from 'react-router-dom';
 import { createPatient } from '../api/patients';
 import { useRole } from '../hooks/useRole';
 import { Navigate } from 'react-router-dom';
+import { Button } from '../components/ui/Button';
+
 
 export function PatientCreatePage() {
   const navigate = useNavigate();
@@ -57,13 +59,15 @@ export function PatientCreatePage() {
         sex: (form.sex as 'MALE' | 'FEMALE' | null) || null,
         bloodGroup: form.bloodGroup || null,
         profession: form.profession || null,
-        maritalStatus: form.maritalStatus || null,
+        maritalStatus: (form.maritalStatus as 'CELIBATAIRE' | 'MARIE' | 'DIVORCE' | 'VEUF' | null) || null,
         nationality: form.nationality || null,
         countryOfOrigin: form.countryOfOrigin || null,
         cityOfResidence: form.cityOfResidence || null,
         neighborhood: form.neighborhood || null,
         idCardNumber: form.idCardNumber || null,
         email: form.email || null,
+        isMinor: false,        // ← Ajoute cette ligne
+        parentId: null,        // ← Ajoute cette ligne
         allergies: form.allergies || null,
         medicalHistory: form.medicalHistory || null,
       });
@@ -172,7 +176,7 @@ export function PatientCreatePage() {
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Ville de résidence</label>
-              <input type="text" name="cityOfResidence" value={form.cityOfResidence} onChange={handleChange} placeholder="Ex: Douala"
+              <input type="text" name="cityOfResidence" value={form.cityOfResidence} onChange={handleChange} placeholder="Ex: Garoua"
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" />
             </div>
             <div>
@@ -217,10 +221,10 @@ export function PatientCreatePage() {
           <Link to="/patients" className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
             Annuler
           </Link>
-          <button type="submit" disabled={loading}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors">
-            {loading ? 'Création...' : 'Créer le patient'}
-          </button>
+          // Dans le formulaire, remplace le bouton :
+            <Button type="submit" disabled={loading}>
+              {loading ? 'Création...' : 'Créer le patient'}
+            </Button>
         </div>
       </form>
     </div>

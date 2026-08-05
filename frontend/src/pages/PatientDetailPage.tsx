@@ -64,6 +64,16 @@ useEffect(() => {
           <Link to="/" className="text-blue-600 hover:text-blue-700">
             ← Retour
           </Link>
+
+            {can('canCreatePatient') && (
+            <Link
+              to={`/patients/${patient.id}/edit`}
+              className="px-3 py-1.5 text-sm bg-surface-100 text-surface-700 rounded-xl hover:bg-surface-200 transition-colors"
+            >
+              ✏️ Modifier
+            </Link>
+          )}
+
           <h2 className="text-2xl font-bold text-gray-800">
             {patient.firstName} {patient.lastName}
           </h2>

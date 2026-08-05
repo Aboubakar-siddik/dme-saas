@@ -33,7 +33,8 @@ export function DashboardCharts() {
             <XAxis dataKey="day" tick={{ fill: '#6b7280', fontSize: 12 }} />
             <YAxis tick={{ fill: '#6b7280', fontSize: 12 }} allowDecimals={false} />
             <Tooltip />
-            <Bar dataKey="consultations" fill="#3b82f6" radius={[6, 6, 0, 0]} name="Consultations" />
+            <Bar dataKey="consultations" fill="#0B6E99" radius={[6, 6, 0, 0]} name="Consultations" />
+            <Bar dataKey="revenu" fill="#2E8B57" radius={[6, 6, 0, 0]} name="Revenu (FCFA)" />
           </BarChart>
         </ResponsiveContainer>
       </Card>

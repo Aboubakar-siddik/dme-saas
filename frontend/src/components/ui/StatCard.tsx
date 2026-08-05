@@ -1,6 +1,4 @@
 import { Card } from './Card';
-import { DivideIcon as LucideIcon } from 'lucide-react';
-
 interface StatCardProps {
   label: string;
   value: string | number;
@@ -9,9 +7,9 @@ interface StatCardProps {
 }
 
 const colors = {
-  blue: 'text-blue-600 bg-blue-50',
-  green: 'text-green-600 bg-green-50',
-  orange: 'text-orange-600 bg-orange-50',
+  blue: 'text-primary-600 bg-primary-50',
+  green: 'text-accent-600 bg-accent-50',
+  orange: 'text-warning-600 bg-warning-50',
   purple: 'text-purple-600 bg-purple-50',
 };
 
@@ -20,11 +18,11 @@ export function StatCard({ label, value, icon: Icon, color }: StatCardProps) {
     <Card>
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-500 font-medium">{label}</p>
-          <p className="text-2xl font-bold text-gray-900 mt-1">{value}</p>
+          <p className="text-xs font-medium text-surface-500 uppercase tracking-wider">{label}</p>
+          <p className="text-2xl font-heading font-bold text-surface-800 mt-1">{value}</p>
         </div>
-        <div className={`p-3 rounded-lg ${colors[color]}`}>
-          <Icon size={24} />
+        <div className={`p-3 rounded-xl ${colors[color]}`}>
+          <Icon size={22} />
         </div>
       </div>
     </Card>

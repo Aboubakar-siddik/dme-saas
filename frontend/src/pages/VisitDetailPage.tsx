@@ -102,7 +102,7 @@ export function VisitDetailPage() {
         bilan,
         prescription,
         fee: fee ? parseFloat(fee) : null,
-        status: newStatus,
+        status: newStatus as 'WAITING' | 'IN_PROGRESS' | 'COMPLETED',
       });
       setSuccess(newStatus === 'COMPLETED' ? 'Consultation terminée avec succès.' : 'Brouillon sauvegardé.');
       if (newStatus === 'COMPLETED') {

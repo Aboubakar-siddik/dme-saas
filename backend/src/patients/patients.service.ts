@@ -26,6 +26,7 @@ export class PatientsService {
       );
     }
 
+    
     // Créer le patient
     const patient = await this.prisma.patient.create({
       data: {
@@ -86,4 +87,25 @@ export class PatientsService {
 
     return patient;
   }
-}
+  async update(clinicId: string, id: string, updatePatientDto: Partial<CreatePatientDto>) {
+    const patient = await this.prisma.patient.findFirst({
+      where: { id, clinicId },
+    });
+
+    if (!patient) {
+      throw new NotFoundException('Patient introuvable.');
+    }
+
+    return this.prisma.patient.update({
+      where: { id },
+      data: {
+        ...updatePatientDto,
+        dateOfBirth: updatePatientDto.dateOfBirth
+          ? new Date(updatePatientDto.dateOfBirth)
+          : undefined,
+      },
+    });
+  }
+} 
+
+
