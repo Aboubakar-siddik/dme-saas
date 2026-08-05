@@ -39,6 +39,11 @@ export function PatientCardPage() {
           <div className="text-center border-b-2 border-gray-800 pb-4 mb-6">
             <h1 className="text-xl font-bold uppercase tracking-wider">Carnet de Santé</h1>
             <p className="text-sm text-gray-600 mt-1">Dossier Médical Électronique</p>
+              {patient.imn && (
+                <p className="text-sm text-center mt-2 font-mono font-bold text-primary-600">
+                  IMN : {patient.imn}
+                </p>
+              )}
           </div>
 
           {/* Identité patient */}

@@ -5,16 +5,20 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service.js';
 import { CreatePatientDto } from './dto/create-patient.dto.js';
+import { ImnService } from './imn.service.js';
 
 @Injectable()
 export class PatientsService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly imnService: ImnService,
+  ) {}
 
   async create(clinicId: string, createPatientDto: CreatePatientDto) {
     const existingPatient = await this.prisma.patient.findUnique({
       where: {
         clinicId_phoneNumber: {
-          clinicId: clinicId,
+          clinicId,
           phoneNumber: createPatientDto.phoneNumber,
         },
       },
@@ -26,12 +30,13 @@ export class PatientsService {
       );
     }
 
-    
-    // Créer le patient
+    const imn = await this.imnService.generateIMN();
+
     const patient = await this.prisma.patient.create({
       data: {
         ...createPatientDto,
-        clinicId: clinicId,
+        clinicId,
+        imn,
         dateOfBirth: createPatientDto.dateOfBirth
           ? new Date(createPatientDto.dateOfBirth)
           : null,
@@ -44,7 +49,7 @@ export class PatientsService {
   async search(clinicId: string, query: string) {
     const patients = await this.prisma.patient.findMany({
       where: {
-        clinicId: clinicId,
+        clinicId,
         OR: [
           { firstName: { contains: query, mode: 'insensitive' } },
           { lastName: { contains: query, mode: 'insensitive' } },
@@ -59,6 +64,7 @@ export class PatientsService {
         dateOfBirth: true,
         sex: true,
         bloodGroup: true,
+        imn: true,
       },
       take: 10,
       orderBy: { lastName: 'asc' },
@@ -75,10 +81,7 @@ export class PatientsService {
 
   async findOne(clinicId: string, id: string) {
     const patient = await this.prisma.patient.findFirst({
-      where: {
-        id,
-        clinicId: clinicId,
-      },
+      where: { id, clinicId },
     });
 
     if (!patient) {
@@ -87,7 +90,12 @@ export class PatientsService {
 
     return patient;
   }
-  async update(clinicId: string, id: string, updatePatientDto: Partial<CreatePatientDto>) {
+
+  async update(
+    clinicId: string,
+    id: string,
+    updatePatientDto: Partial<CreatePatientDto>,
+  ) {
     const patient = await this.prisma.patient.findFirst({
       where: { id, clinicId },
     });
@@ -106,6 +114,4 @@ export class PatientsService {
       },
     });
   }
-} 
-
-
+}

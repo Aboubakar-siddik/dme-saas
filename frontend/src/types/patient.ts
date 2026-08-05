@@ -20,6 +20,7 @@ export interface Patient {
   allergies: string | null;
   medicalHistory: string | null;
   createdAt: string;
+  imn: string | null;
   updatedAt: string;
 }
 

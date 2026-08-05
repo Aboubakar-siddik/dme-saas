@@ -5,6 +5,7 @@ import type { Patient } from '../types/patient';
 import { getPatientHistory } from '../api/visits';
 import type { Visit } from '../types/visit';
 import { useRole } from '../hooks/useRole';
+import { QRCodeSVG } from 'qrcode.react';
 
 
 
@@ -105,6 +106,20 @@ useEffect(() => {
                     ? new Date(patient.dateOfBirth).toLocaleDateString('fr-FR')
                     : 'Non renseigné'}
                 </dd>
+                {patient.imn && (
+                  <div>
+                    <dt className="text-sm text-gray-500">IMN</dt>
+                    <dd className="font-bold text-primary-600 font-mono tracking-wider">{patient.imn}</dd>
+                  </div>
+                )}
+                {patient.imn && (
+                  <div className="mt-4 flex justify-center">
+                    <div className="bg-white p-3 rounded-xl border">
+                      <QRCodeSVG value={patient.imn} size={100} level="M" />
+                      <p className="text-xs text-center text-gray-500 mt-1">Scanner pour accéder au dossier</p>
+                    </div>
+                  </div>
+                )}
               </div>
               <div>
                 <dt className="text-sm text-gray-500">Sexe</dt>

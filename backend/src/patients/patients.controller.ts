@@ -1,10 +1,10 @@
-import { Controller, Get, Post, Body, Param, Query, UseGuards, Req, Patch } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, Query, UseGuards, Req } from '@nestjs/common';
 import { PatientsService } from './patients.service.js';
 import { CreatePatientDto } from './dto/create-patient.dto.js';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard.js';
 
 @Controller('patients')
-@UseGuards(JwtAuthGuard) // Protège toutes les routes
+@UseGuards(JwtAuthGuard)
 export class PatientsController {
   constructor(private readonly patientsService: PatientsService) {}
 
@@ -18,18 +18,22 @@ export class PatientsController {
     return this.patientsService.search(req.user.clinicId, query);
   }
 
+  @Get(':id/imn')
+  getIMN(@Req() req: any, @Param('id') id: string) {
+    return this.patientsService.findOne(req.user.clinicId, id).then(p => ({ imn: p.imn }));
+  }
+
   @Get(':id')
   findOne(@Req() req: any, @Param('id') id: string) {
     return this.patientsService.findOne(req.user.clinicId, id);
   }
-@Patch(':id')
-update(
-  @Req() req: any,
-  @Param('id') id: string,
-  @Body() updatePatientDto: Partial<CreatePatientDto>,
-) {
-  return this.patientsService.update(req.user.clinicId, id, updatePatientDto);
-}
-  
-}
 
+  @Patch(':id')
+  update(
+    @Req() req: any,
+    @Param('id') id: string,
+    @Body() updatePatientDto: Partial<CreatePatientDto>,
+  ) {
+    return this.patientsService.update(req.user.clinicId, id, updatePatientDto);
+  }
+}
