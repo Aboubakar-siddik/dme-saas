@@ -51,27 +51,27 @@ export function PatientCreatePage() {
 
     setLoading(true);
     try {
-    const patient = await createPatient({
-      firstName: form.firstName,
-      lastName: form.lastName,
-      phoneNumber: form.phoneNumber,
-      dateOfBirth: form.dateOfBirth || null,
-      sex: (form.sex as 'MALE' | 'FEMALE' | null) || null,
-      bloodGroup: form.bloodGroup || null,
-      profession: form.profession || null,
-      maritalStatus: (form.maritalStatus as 'CELIBATAIRE' | 'MARIE' | 'DIVORCE' | 'VEUF' | null) || null,
-      nationality: form.nationality || null,
-      countryOfOrigin: form.countryOfOrigin || null,
-      cityOfResidence: form.cityOfResidence || null,
-      neighborhood: form.neighborhood || null,
-      idCardNumber: form.idCardNumber || null,
-      email: form.email || null,
-      isMinor: false,
-      parentId: null,
-      imn: null,        // ← Ajoute cette ligne
-      allergies: form.allergies || null,
-      medicalHistory: form.medicalHistory || null,
-    });
+      const patient = await createPatient({
+        firstName: form.firstName,
+        lastName: form.lastName,
+        phoneNumber: form.phoneNumber,
+        dateOfBirth: form.dateOfBirth || null,
+        sex: (form.sex as 'MALE' | 'FEMALE' | null) || null,
+        bloodGroup: form.bloodGroup || null,
+        profession: form.profession || null,
+        maritalStatus: (form.maritalStatus as 'CELIBATAIRE' | 'MARIE' | 'DIVORCE' | 'VEUF' | null) || null,
+        nationality: form.nationality || null,
+        countryOfOrigin: form.countryOfOrigin || null,
+        cityOfResidence: form.cityOfResidence || null,
+        neighborhood: form.neighborhood || null,
+        idCardNumber: form.idCardNumber || null,
+        email: form.email || null,
+        isMinor: false,
+        parentId: null,
+        imn: null,        // ← Ajoute cette ligne
+        allergies: form.allergies || null,
+        medicalHistory: form.medicalHistory || null,
+      });
       navigate(`/patients/${patient.id}`);
     } catch (err: any) {
       const message = err?.response?.data?.message || 'Erreur lors de la création du patient.';

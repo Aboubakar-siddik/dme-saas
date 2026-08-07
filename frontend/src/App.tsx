@@ -101,6 +101,8 @@ function AppLayout() {
                     <Settings size={16} /> Paramètres
                   </Link>
                 )}
+
+                
               </nav>
 
               {/* Profil + Bouton mobile */}
@@ -113,6 +115,9 @@ function AppLayout() {
                   <div className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center">
                     <span className="text-primary-700 font-heading font-bold text-sm">{user?.firstName?.[0]}{user?.lastName?.[0]}</span>
                   </div>
+                  <button onClick={logout} className="text-sm text-red-600 hover:text-red-700 font-medium">
+                  Déconnexion
+                </button>
                 </div>
 
                 {/* Bouton hamburger mobile */}
@@ -156,6 +161,9 @@ function AppLayout() {
                   </Link>
                 )}
                 <hr className="my-2" />
+                <button onClick={logout} className="flex items-center gap-1 text-sm text-danger-500 font-medium">
+                  <LogOut size={16} /> Déconnexion
+                </button>
                 <div className="flex items-center justify-between px-3 py-2">
                   <div>
                     <p className="text-sm font-medium">{user?.firstName} {user?.lastName}</p>

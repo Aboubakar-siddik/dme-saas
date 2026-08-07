@@ -75,4 +75,10 @@ export class CreatePatientDto {
 
   @IsOptional() @IsString()
   medicalHistory?: string;
+
+  @IsOptional()
+  @IsString()
+  imn?: string;
+
+  
 }
